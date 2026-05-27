@@ -1,7 +1,7 @@
 const canvas = document.querySelector(".game");
 const ctx = canvas.getContext("2d");
 
-const button = document.querySelector(".left");
+const button = document.querySelector(".right");
 
 canvas.width = window.innerWidth*0.98;
 canvas.height = window.innerHeight*0.984;
