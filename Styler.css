@@ -4,7 +4,7 @@ h1 {
 }
 
 .border{
-    background-image: url("border.png");
+    background-image: url("Textures/border.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;    
     padding: 28.3%;
