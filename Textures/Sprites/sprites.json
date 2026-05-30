@@ -1,0 +1,99 @@
+[
+  {
+    "name": "player_1_Idl",
+    "active": false,
+    "relative":false,
+    "image": "Textures/Sprites/player_idl.png",
+    "frameWidth": 17,
+    "frameHeight": 37,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,50,4,50, 1,50,5,50, 0,50,4,50, 3,50,7,50, 0,50,4,50, 8,200, 0,50,4,50,0,50,4,50,0,50,4,50, 1,50,5,50, 0,50,4,50, 3,50,7,50, 0,50,4,50, 10,200,0,50,4,50,0,50,4,50]
+  },
+
+  {
+    "name": "player_1_RunR",
+    "active": false,
+    "relative":false,
+    "image": "Textures/Sprites/player_runr.png",
+    "frameWidth": 17,
+    "frameHeight": 37,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,5,1,5,0,5,2,5]
+  },
+
+  {
+    "name": "player_1_RunL",
+    "active": false,
+    "relative":false,
+    "image": "Textures/Sprites/player_runl.png",
+    "frameWidth": 17,
+    "frameHeight": 37,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,5,1,5,0,5,2,5]
+  },
+
+  {
+    "name": "player_2_RunR",
+    "active": false,
+    "relative":false,
+    "image": "Textures/Sprites/player2_runr.png",
+    "frameWidth": 17,
+    "frameHeight": 37,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,5,1,5,0,5,2,5]
+  },
+
+  {
+    "name": "player_2_RunL",
+    "active": false,
+    "relative":false,
+    "image": "Textures/Sprites/player2_runl.png",
+    "frameWidth": 17,
+    "frameHeight": 37,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,5,1,5,0,5,2,5]
+  },
+
+  {
+    "name": "player_2_Idl",
+    "active": false,
+    "relative":false,
+    "image": "Textures/Sprites/player2_idl.png",
+    "frameWidth": 17,
+    "frameHeight": 37,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,50,4,50,0,50,4,50,0,50,4,50, 1,50,5,50, 0,50,4,50, 3,50,7,50, 0,50,4,50, 8,200, 0,50,4,50,0,50,4,50,0,50,4,50, 1,50,5,50, 0,50,4,50, 3,50,7,50, 0,50,4,50, 10,200]
+  },
+
+  {
+    "name": "rope",
+    "active": true,
+    "relative":true,
+    "image": "Textures/Sprites/rope.png",
+    "frameWidth": 14,
+    "frameHeight": 34,
+    "speed": 0,
+    "x": 484,
+    "y": 93,
+    "frame": 0,
+    "frames": [2,22,1,22,2,22,1,22,2,22,1,22,0,22,1,22,0,22,1,10,0,10,3,10,0,10,3,10,0,10,3,10,0,10,3,10,0,10,1,22,2,22,1,22]
+  }
+]
