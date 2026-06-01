@@ -493,7 +493,7 @@ function Set_Events()
             high:"Sea Wall High", 
             active:false, 
             just_recovered:false,
-            hp: 200,
+            hp: 3600,
             hp_def: 3600,
             recovered:0,
             Action_area: [Sget("Sea Wall Undam").x+Sget("Sea Wall Undam").width,Sget("Sea Wall Undam").y,Sget("Sea Wall Undam").x+(2*Sget("Sea Wall Undam").width),Sget("Sea Wall Undam").y+Sget("Sea Wall Undam").height]
@@ -510,7 +510,7 @@ function Set_Events()
             high:"Sat High", 
             active:false, 
             just_recovered:false,
-            hp: 200,
+            hp: 3600,
             hp_def: 3600,
             recovered:0,
             Action_area: [Sget("Sat").x-(Sget("Sat").width/2),Sget("Sat").y,Sget("Sat").x,Sget("Sat").y+Sget("Sat").height]
@@ -518,7 +518,7 @@ function Set_Events()
     ];
 }
 
-let Events_Update_cooldown = 100;
+let Events_Update_cooldown = 600;
 
 function Events_Update(){
     avaible_events = events.length;
@@ -564,7 +564,7 @@ function Events_Update(){
                 event_To_triger.just_recovered=false;
             }
         }
-        Events_Update_cooldown = 100;   
+        Events_Update_cooldown = 600;   
     }
     else
     {
