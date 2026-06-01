@@ -3,6 +3,7 @@
     "name": "player_1_Idl",
     "active": false,
     "relative":false,
+    "replay":true,
     "image": "Textures/Sprites/player_idl.png",
     "frameWidth": 17,
     "frameHeight": 37,
@@ -17,6 +18,7 @@
     "name": "player_1_RunR",
     "active": false,
     "relative":false,
+    "replay":true,
     "image": "Textures/Sprites/player_runr.png",
     "frameWidth": 17,
     "frameHeight": 37,
@@ -28,9 +30,40 @@
   },
 
   {
+    "name": "player_1_Wall",
+    "active": false,
+    "relative":false,
+    "replay":true,
+    "image": "Textures/Sprites/player_1_wall.png",
+    "frameWidth": 17,
+    "frameHeight": 37,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,5,1,5,2,5]
+  },
+
+  {
+    "name": "player_2_Wall",
+    "active": false,
+    "relative":false,
+    "replay":true,
+    "image": "Textures/Sprites/player_2_wall.png",
+    "frameWidth": 17,
+    "frameHeight": 37,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,5,1,5,2,5]
+  },
+
+  {
     "name": "player_1_RunL",
     "active": false,
     "relative":false,
+    "replay":true,
     "image": "Textures/Sprites/player_runl.png",
     "frameWidth": 17,
     "frameHeight": 37,
@@ -45,6 +78,7 @@
     "name": "player_2_RunR",
     "active": false,
     "relative":false,
+    "replay":true,
     "image": "Textures/Sprites/player2_runr.png",
     "frameWidth": 17,
     "frameHeight": 37,
@@ -59,6 +93,7 @@
     "name": "player_2_RunL",
     "active": false,
     "relative":false,
+    "replay":true,
     "image": "Textures/Sprites/player2_runl.png",
     "frameWidth": 17,
     "frameHeight": 37,
@@ -73,6 +108,7 @@
     "name": "player_2_Idl",
     "active": false,
     "relative":false,
+    "replay":true,
     "image": "Textures/Sprites/player2_idl.png",
     "frameWidth": 17,
     "frameHeight": 37,
@@ -87,13 +123,449 @@
     "name": "rope",
     "active": true,
     "relative":true,
+    "replay":true,
     "image": "Textures/Sprites/rope.png",
     "frameWidth": 14,
     "frameHeight": 34,
     "speed": 0,
     "x": 484,
-    "y": 93,
+    "y": 113,
     "frame": 0,
     "frames": [2,22,1,22,2,22,1,22,2,22,1,22,0,22,1,22,0,22,1,10,0,10,3,10,0,10,3,10,0,10,3,10,0,10,3,10,0,10,1,22,2,22,1,22]
+  },
+
+
+
+
+
+
+  {
+    "name": "WestWaves",
+    "active": true,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/WestWaves.png",
+    "frameWidth": 230,
+    "frameHeight": 136,
+    "speed": 0,
+    "x": 0,
+    "y": 458,
+    "frame": 0,
+    "frames": [4,10,3,10,2,10,1,10,0,10,1,10,2,10,3,10,  4,10,3,10,2,10,1,10,0,10,1,10,2,10,3,10,  4,10,3,10,2,10,1,10,0,10,1,10,2,10,3,10,  4,10,3,10,2,10,1,10,0,10,1,10,2,10,3,10,  4,10,3,10,2,10,1,10,0,10,1,10,2,10,3,10,  4,8,5,8,6,8,7,8,8,8,9,7,10,6,11,8,12,9,13,10]
+  },
+  
+  {
+    "name": "Sea Wall Undam",
+    "active": true,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Wall/SeaWall.png",
+    "frameWidth": 36,
+    "frameHeight": 61,
+    "speed": 0,
+    "x": 203,
+    "y": 471,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "Sea Wall damaged",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Wall/WallCracked.png",
+    "frameWidth": 36,
+    "frameHeight": 61,
+    "speed": 0,
+    "x": 203,
+    "y": 471,
+    "frame": 0,
+    "frames": [0,5,1,5,2,5,3,5,2,5,1,5]
+  },
+
+  {
+    "name": "Sea Wall High",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Wall/SeaWallHigh.png",
+    "frameWidth": 36,
+    "frameHeight": 61,
+    "speed": 0,
+    "x": 203,
+    "y": 471,
+    "frame": 0,
+    "frames": [0,5,1,5,2,5,3,5,2,5,1,5]
+  },
+
+  {
+    "name": "Sea Wall Destroyed",
+    "active": false,
+    "relative":true,
+    "replay":false,
+    "image": "Textures/Sprites/Wall/SeaWallDestroyed.png",
+    "frameWidth": 442,
+    "frameHeight": 594,
+    "speed": 0,
+    "x": 0,
+    "y": 0,
+    "frame": 0,
+    "frames": [0,10,1,10,2,10,3,10,4,10,5,10,6,10,7,10,8,10,9,10,10,10,11,10]
+  },
+
+  {
+    "name": "Wall Ico",
+    "active": true,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Wall/waterWallIco.png",
+    "frameWidth": 20,
+    "frameHeight": 20,
+    "speed": 0,
+    "x": 430,
+    "y": 15,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "Wall Ico Dam",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Wall/waterWallDamagedIco.png",
+    "frameWidth": 20,
+    "frameHeight": 20,
+    "speed": 0,
+    "x": 430,
+    "y": 15,
+    "frame": 0,
+    "frames": [0,5,1,5,2,5,3,5,2,5,1,5]
+  },
+
+  {
+    "name": "Wall Ico Des",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Wall/waterWallDestroyedIco.png",
+    "frameWidth": 20,
+    "frameHeight": 20,
+    "speed": 0,
+    "x": 430,
+    "y": 15,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+
+
+
+  
+
+  {
+    "name": "Sat",
+    "active": true,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Sat.png",
+    "frameWidth": 36,
+    "frameHeight": 89,
+    "speed": 0,
+    "x": 664,
+    "y": 133,
+    "frame": 0,
+    "frames": [0,20,1,20,2,20,0,20,1,20,2,20,0,20,1,20,2,20,0,20,1,20,2,20,0,20,1,20,2,20,0,20,1,20,2,20,3,5,4,5,5,5,6,5,7,5]
+  },
+
+  {
+    "name": "Sat Dam",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Sat Dam.png",
+    "frameWidth": 36,
+    "frameHeight": 89,
+    "speed": 0,
+    "x": 664,
+    "y": 133,
+    "frame": 0,
+    "frames": [0,5, 3,5, 6,5, 9,5, 7,5, 4,5, 1,5, 4,5,8,5, 11,5, 8,5, 2,5,4,5, 7,5, 10,5, 7,5,3,5, 0,5, 3,5, 6,5  ,10,5,7,5,4,5,1,5 ,5,5,8,5,11,5,8,5 ,4,5,1,5,4,5,6,5]
+  },
+
+  {
+    "name": "Sat High",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Sat High.png",
+    "frameWidth": 36,
+    "frameHeight": 89,
+    "speed": 0,
+    "x": 664,
+    "y": 133,
+    "frame": 0,
+    "frames": [0,5, 3,5, 6,5, 9,5, 7,5, 4,5, 1,5, 4,5,8,5, 11,5, 8,5, 2,5,4,5, 7,5, 10,5, 7,5,3,5, 0,5, 3,5, 6,5  ,10,5,7,5,4,5,1,5 ,5,5,8,5,11,5,8,5 ,4,5,1,5,4,5,6,5]
+  },
+
+  {
+    "name": "Sat Des",
+    "active": false,
+    "relative":true,
+    "replay":false,
+    "image": "Textures/Sprites/Satelite/Sat Des.png",
+    "frameWidth": 100,
+    "frameHeight": 249,
+    "speed": 0,
+    "x": 664,
+    "y": 133,
+    "frame": 0,
+    "frames": [0,10,1,10,2,10,3,10,4,10,5,10,6,10,7,10,8,10,9,10]
+  },
+
+  {
+    "name": "Sat Ico",
+    "active": true,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Sat Ico.png",
+    "frameWidth": 20,
+    "frameHeight": 20,
+    "speed": 0,
+    "x": 450,
+    "y": 15,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "Sat Dam Ico",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Sat Dam Ico.png",
+    "frameWidth": 20,
+    "frameHeight": 20,
+    "speed": 0,
+    "x": 450,
+    "y": 15,
+    "frame": 0,
+    "frames": [0,5,1,5,2,5,3,5,2,5,1,5]
+  },
+
+  {
+    "name": "Sat Des Ico",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Sat Des Ico.png",
+    "frameWidth": 20,
+    "frameHeight": 20,
+    "speed": 0,
+    "x": 450,
+    "y": 15,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+
+
+
+  
+
+  {
+    "name": "SM Base",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Base.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "SM No Signal",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM No Signal.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "SM Yes Signal",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Yes Signal.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "SM Anten 0",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Anten 0.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "SM Anten 1",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Anten 1.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "SM Anten 2",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Anten 2.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "SM Anten 3",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Anten 3.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "SM Anten 4",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Anten 4.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,1]
+  },
+
+  {
+    "name": "SM Signal 0",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Signal 0.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,10,1,10,2,10]
+  },
+
+  {
+    "name": "SM Signal 1",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Signal 1.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,10,1,10,2,10]
+  },
+
+  {
+    "name": "SM Signal 2",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Signal 2.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,10,1,10,2,10]
+  },
+
+  {
+    "name": "SM Signal 3",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Signal 3.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,10,1,10,2,10]
+  },
+
+  {
+    "name": "SM Signal 4",
+    "active": false,
+    "relative":true,
+    "replay":true,
+    "image": "Textures/Sprites/Satelite/Menu/SM Signal 4.png",
+    "frameWidth": 125,
+    "frameHeight": 250,
+    "speed": 0,
+    "x": null,
+    "y": null,
+    "frame": 0,
+    "frames": [0,10,1,10,2,10]
   }
 ]
