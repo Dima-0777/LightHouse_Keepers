@@ -38,6 +38,8 @@ colImg.onload = () => {
 
 const sprites = [];
 
+Sprites_Ready = false;
+
 function loadSprites() {
 
     return fetch("Textures/Sprites/sprites.json")
@@ -66,7 +68,8 @@ function loadSprites() {
                             frames: data[key].frames,
                             speed: data[key].frames[data[key].frame*2+1],
                             relative: data[key].relative,
-                            replay: data[key].replay
+                            replay: data[key].replay,
+                            priority:data[key].priority
                         });
 
                         loaded++;
@@ -87,9 +90,28 @@ function loadSprites() {
 
                     img.src = data[key].image;
                 }
+                Sprites_Ready = true;
             });
         });
 
+}
+
+function Prioritise_Sprites()
+{
+    swaped = true;
+    while (swaped==true)
+    {
+        swaped = false;
+        for (let i =0; i<sprites.length-1;i++)
+        {
+            if (sprites[i].priority>sprites[i+1].priority){
+                tepm_srpite = sprites[i+1];
+                sprites[i+1]=sprites[i];
+                sprites[i] = tepm_srpite;
+                swaped=true;
+            }
+        }
+    }
 }
 
 // player object
@@ -103,6 +125,7 @@ const player1 = {
     control_Delay:0,
     action_buffer:false,
     menu_pos: [15,15],
+    effects:[],
 
     idl:"player_1_Idl",
     runL:"player_1_RunL",
@@ -119,7 +142,8 @@ const player2 = {
     height:-7,
     control_Delay:0,
     action_buffer:false,
-    menu_pos: [1060,0],
+    menu_pos: [835,15],
+    effects:[],
 
     idl:"player_2_Idl",
     runL:"player_2_RunL",
@@ -134,6 +158,32 @@ Satelite_Manu_Used_By=null;
 Satelite_Manu_target = 0;
 Satelite_Manu_progress = 0;
 
+//fish menu
+Fish_Menu_Used_By=null;
+Fish_Menu_progress = 0;
+
+//Comp menu
+Comp_Menu_Used_By=null;
+Comp_Menu_progress = 0;
+Comp_Menu_progs = [];
+
+//Electro menu
+Electro_Menu_Used_By=null;
+Electro_Menu_progress = 0;
+Electro_Menu_Buffer = false;
+Electro_Menu_BX =0;
+Electro_Menu_BY =0;
+Electro_Menu_SX =0;
+Electro_Menu_SY =0;
+Electro_Menu_Selected = 0;
+
+
+//Cabel Menu
+Cabel_Menu_Used_By = null;
+Cabel_Menu_progress = [];
+Cabel_Menu_selected = false;
+Cabel_Menu_selected_2= false;
+Cabel_Menu_In_Wire = false;
 
 
 // keys state
@@ -155,12 +205,22 @@ window.addEventListener("gamepadconnected", (e) => {
 
     
 
-function Calcs(player,controler,left,up,right,act,enter) {    
+function Calcs(player,controler,left,up,right,act,enter,down) {    
     // WASD movement
     const gamepads = navigator.getGamepads();
 
     const gp = gamepads[controler];
-
+    
+    for (let i =0;i<player.effects.length;i++)
+    {
+        buttonRight.value=player.effects[0][1];
+        if ((player.effects[i][0]=="Speed2")&&(player.effects[i][2]==false))
+        {
+            player.speed[0]=5;
+            player.effects[i][2]=true;
+        }
+    }
+    
     let Player_Temp_Speed = player.speed[0];
     if (gp&&(Math.abs(gp.axes[0])>0.1))
     {
@@ -268,8 +328,8 @@ function Calcs(player,controler,left,up,right,act,enter) {
     }
     if ((!player.action_buffer)&&((keys[act])||((gp)&&(gp.buttons[1].pressed))))
     {
-        Action_Button_Pressed(player);
         player.action_buffer=true;
+        Action_Button_Pressed(player);
     }
     }
     else
@@ -314,6 +374,21 @@ function Calcs(player,controler,left,up,right,act,enter) {
 
     player.speed[0]=Player_Temp_Speed;
 
+    for (let i =0;i<player.effects.length;i++)
+    {
+        if (player.effects[i][1]<=0)
+        {
+            if ((player.effects[i][0]=="Speed2")&&(player.effects[i][2]))
+            {
+                player.speed[0]=3;
+            }
+            player.effects.splice(i, 1);
+        }
+        else
+        {
+            player.effects[i][1]--;
+        }
+    }
     
     if (player.control_Delay<0)
     {
@@ -374,6 +449,650 @@ function Calcs(player,controler,left,up,right,act,enter) {
                 }
             }
         }
+        else if ((Fish_Menu_Used_By!=null)&&(Fish_Menu_Used_By.idl==player.idl))
+        {
+            Fish_array = ["FM Fish 0","FM Fish 1","FM Fish 2","FM Fish 3","FM Fish 4","FM Fish 5","FM Fish 6","FM Fish 7"];
+            FishSpeed = 2;
+            FishX=0;
+            FishY=0;
+            Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
+            if (player.idl=="player_2_Idl")
+            {
+                Menu_pos[0]+=350-Sget("FM Base").width;
+            }
+            if (((keys[up])||((gp)&&(gp.axes[1]<-0.8)&&(gp.axes[0]>-0.25)&&(gp.axes[0]<0.25)))&&(!((keys[left])||(keys[right])||(keys[down]))))
+            {
+                for (let i = 0;i<8;i++)
+                {
+                    Sget(Fish_array[i]).active=false;
+                }
+                Sget(Fish_array[2]).active=true;
+                FishY-=FishSpeed;
+            }
+            else if (((keys[left])||((gp)&&(gp.axes[0]<-0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[up])||(keys[right])||(keys[down]))))
+            {
+                for (let i = 0;i<8;i++)
+                {
+                    Sget(Fish_array[i]).active=false;
+                }
+                Sget(Fish_array[0]).active=true;
+                FishX-=FishSpeed;
+            }
+            else if (((keys[right])||((gp)&&(gp.axes[0]>0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[left])||(keys[up])||(keys[down]))))
+            {
+                for (let i = 0;i<8;i++)
+                {
+                    Sget(Fish_array[i]).active=false;
+                }
+                Sget(Fish_array[4]).active=true;
+                FishX+=FishSpeed;
+            }
+            else if (((keys[left]&&keys[up])||((gp)&&(gp.axes[0]<-0.25)&&(gp.axes[1]<-0.25)))&&(!((keys[right])||(keys[down]))))
+            {
+                for (let i = 0;i<8;i++)
+                {
+                    Sget(Fish_array[i]).active=false;
+                }
+                Sget(Fish_array[1]).active=true;
+                FishY-=FishSpeed*0.5;
+                FishX-=FishSpeed*0.5;
+            }
+            else if (((keys[right]&&keys[up])||((gp)&&(gp.axes[0]>0.15)&&(gp.axes[1]<-0.15)))&&(!((keys[left])||(keys[down]))))
+            {
+                for (let i = 0;i<8;i++)
+                {
+                    Sget(Fish_array[i]).active=false;
+                }
+                Sget(Fish_array[3]).active=true;
+                FishY-=FishSpeed*0.5;
+                FishX+=FishSpeed*0.5;
+            }  
+            else if (((keys[left]&&keys[down])||((gp)&&(gp.axes[0]<-0.15)&&(gp.axes[1]>0.15)))&&(!((keys[right])||(keys[up]))))
+            {
+                for (let i = 0;i<8;i++)
+                {
+                    Sget(Fish_array[i]).active=false;
+                }
+                Sget(Fish_array[7]).active=true;
+                FishY+=FishSpeed*0.5;
+                FishX-=FishSpeed*0.5;
+            }
+            else if (((keys[right]&&keys[down])||((gp)&&(gp.axes[0]>0.15)&&(gp.axes[1]>0.15)))&&(!((keys[left])||(keys[up]))))
+            {
+                for (let i = 0;i<8;i++)
+                {
+                    Sget(Fish_array[i]).active=false;
+                }
+                Sget(Fish_array[5]).active=true;
+                FishY+=FishSpeed*0.5;
+                FishX+=FishSpeed*0.5;
+            }  
+            else if (((keys[down])||((gp)&&(gp.axes[1]>0.8)&&(gp.axes[0]>-0.15)&&(gp.axes[0]<0.15)))&&(!((keys[left])||(keys[right])||(keys[up]))))
+            {
+                for (let i = 0;i<8;i++)
+                {
+                    Sget(Fish_array[i]).active=false;
+                }
+                Sget(Fish_array[6]).active=true;
+                FishY+=FishSpeed;
+            }
+            if (!((Sget(Fish_array[0]).x+FishX>=Menu_pos[0]+6)&&(Sget(Fish_array[0]).y+FishY>=Menu_pos[1]+6)&&(Sget(Fish_array[0]).x+FishX<Menu_pos[0]+216)&&(Sget(Fish_array[0]).y+FishY<Menu_pos[1]+197)))
+            {
+                FishX=0;
+                FishY=0;
+            }  
+            
+            for (let i = 0;i<8;i++)
+            {
+                Current_Sprite = Sget(Fish_array[i]);
+                Sset(Current_Sprite,Current_Sprite.x+FishX,Current_Sprite.y+FishY);
+            }
+            for (let i=0;i<12;i++)
+            {
+                Current_Sprite = Sget(Fish_array[0]);
+                Other_Sprite = Sget((["FM Food 0","FM Food 1","FM Food 2","FM Food 3","FM Food 4","FM Food 5","FM Enemy 0","FM Enemy 1","FM Enemy 2","FM Enemy 3","FM Enemy 4","FM Enemy 5"])[i]);
+                if ((Other_Sprite.active)&&(Other_Sprite.y!=null)&&(((Current_Sprite.y<Other_Sprite.y+Other_Sprite.height)&&(Current_Sprite.y+Current_Sprite.height>Other_Sprite.y)&&(Current_Sprite.x<Other_Sprite.x+Other_Sprite.width)&&(Current_Sprite.x+Current_Sprite.width>Other_Sprite.x))))
+                {
+                    if (Other_Sprite.name.substring(3, 7)=="Food")
+                    {
+                        Sget((["FM HP 0","FM HP 1","FM HP 2","FM HP 3","FM HP 4","FM HP 5","FM HP 6"])[Fish_Menu_progress]).active=false;
+                        Fish_Menu_progress++;
+                        Other_Sprite.active=false;
+                    }                    
+                    else
+                    {
+                        Fish_Menu_progress--;
+                        if (Fish_Menu_progress>=0)
+                        {
+                            Sget((["FM HP 0","FM HP 1","FM HP 2","FM HP 3","FM HP 4","FM HP 5","FM HP 6"])[Fish_Menu_progress]).active=true;
+
+                            
+                            for (let k=0;k<6;k++)
+                            {
+                                New_Food=Sget((["FM Food 0","FM Food 1","FM Food 2","FM Food 3","FM Food 4","FM Food 5"])[k]);
+                                if (New_Food.active==false)
+                                {
+                                    k=6;
+                                    Norm = true;
+                                    while(Norm)
+                                    {
+                                        Norm=false;
+                                        Sset(New_Food,randomInt(Menu_pos[0]+6,Menu_pos[0]+216),randomInt(Menu_pos[1]+6,Menu_pos[1]+197));
+                                        for (let j=0;j<13;j++)
+                                        {
+                                            Other_Sprite1 = Sget((["FM Fish 0","FM Food 0","FM Food 1","FM Food 2","FM Food 3","FM Food 4","FM Food 5","FM Enemy 0","FM Enemy 1","FM Enemy 2","FM Enemy 3","FM Enemy 4","FM Enemy 5"])[j]);
+                                            if ((New_Food.name!=Other_Sprite1.name)&&(Other_Sprite1.y!=null)&&(((New_Food.y<Other_Sprite1.y+Other_Sprite1.height)&&(New_Food.y+New_Food.height>Other_Sprite1.y)&&(New_Food.x<Other_Sprite1.x+Other_Sprite1.width)&&(New_Food.x+New_Food.width>Other_Sprite1.x))))
+                                            {
+                                                Norm=true;
+                                                j=13;
+                                            }
+                                        }
+                                    }
+                                    New_Food.active=true;
+                                }
+                            }
+                        }
+                        Other_Sprite.active=false;
+                        if (Fish_Menu_progress<0)
+                        {
+                            Fish_Menu_progress=0;
+                            
+                        }
+                        Norm = true;
+                        while(Norm)
+                        {
+                            Norm=false;
+                            Sset(Other_Sprite,randomInt(Menu_pos[0]+6,Menu_pos[0]+216),randomInt(Menu_pos[1]+6,Menu_pos[1]+197));
+                            for (let j=0;j<13;j++)
+                            {
+                                Other_Sprite1 = Sget((["FM Fish 0","FM Food 0","FM Food 1","FM Food 2","FM Food 3","FM Food 4","FM Food 5","FM Enemy 0","FM Enemy 1","FM Enemy 2","FM Enemy 3","FM Enemy 4","FM Enemy 5"])[j]);
+                                if ((Other_Sprite.name!=Other_Sprite1.name)&&(Other_Sprite1.y!=null)&&(((Other_Sprite.y<Other_Sprite1.y+Other_Sprite1.height)&&(Other_Sprite.y+Other_Sprite.height>Other_Sprite1.y)&&(Other_Sprite.x<Other_Sprite1.x+Other_Sprite1.width)&&(Other_Sprite.x+Other_Sprite.width>Other_Sprite1.x))))
+                                {
+                                    Norm=true;
+                                    j=13;
+                                }
+                            }
+                        }
+                        Other_Sprite.active=true;
+                    }
+                }
+            }
+            
+            if ((events[2].hp==0)||((!player.action_buffer)&&((keys[act])||((gp)&&(gp.buttons[1].pressed)))))
+            {
+                Fish_Menu_Used_By=null;
+                player.control_Delay=0;
+                player.action_buffer=true;
+                Temp_array = ["FM Food 0","FM Food 1","FM Food 2","FM Food 3","FM Food 4","FM Food 5","FM Enemy 0","FM Enemy 1","FM Enemy 2","FM Enemy 3","FM Enemy 4","FM Enemy 5","FM Fish 0","FM Fish 1","FM Fish 2","FM Fish 3","FM Fish 4","FM Fish 5","FM Fish 6","FM Fish 7","FM HP 6","FM HP 5","FM HP 4","FM HP 3","FM HP 2","FM HP 1","FM HP 0","FM Base",];
+                for (let i=0;i<Temp_array.length;i++)
+                {
+                    Sget((Temp_array)[i]).active=false;
+                }
+                if(Fish_Menu_progress==6)
+                {
+                    Reset_Event(events[2]);
+                }
+            }
+        }
+        else if ((Comp_Menu_Used_By!=null)&&(Comp_Menu_Used_By.idl==player.idl))
+        {
+            Comp_array = ["CM Virus 0","CM Virus 1","CM Virus 2","CM Virus 3","CM Virus 4","CM Virus 5","CM App 0","CM App 1","CM App 2","CM App 3","CM App 4","CM App 5",];
+            CompSpeed = 3;
+            CompX=0;
+            CompY=0;
+            Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
+            if (((keys[up])||((gp)&&(gp.axes[1]<-0.8)&&(gp.axes[0]>-0.25)&&(gp.axes[0]<0.25)))&&(!((keys[left])||(keys[right])||(keys[down]))))
+            {
+                CompY-=CompSpeed;
+            }
+            else if (((keys[left])||((gp)&&(gp.axes[0]<-0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[up])||(keys[right])||(keys[down]))))
+            {
+                CompX-=CompSpeed;
+            }
+            else if (((keys[right])||((gp)&&(gp.axes[0]>0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[left])||(keys[up])||(keys[down]))))
+            {
+                CompX+=CompSpeed;
+            }
+            else if (((keys[left]&&keys[up])||((gp)&&(gp.axes[0]<-0.25)&&(gp.axes[1]<-0.25)))&&(!((keys[right])||(keys[down]))))
+            {
+                CompY-=CompSpeed*0.5;
+                CompX-=CompSpeed*0.5;
+            }
+            else if (((keys[right]&&keys[up])||((gp)&&(gp.axes[0]>0.15)&&(gp.axes[1]<-0.15)))&&(!((keys[left])||(keys[down]))))
+            {
+                CompY-=CompSpeed*0.5;
+                CompX+=CompSpeed*0.5;
+            }  
+            else if (((keys[left]&&keys[down])||((gp)&&(gp.axes[0]<-0.15)&&(gp.axes[1]>0.15)))&&(!((keys[right])||(keys[up]))))
+            {
+                CompY+=CompSpeed*0.5;
+                CompX-=CompSpeed*0.5;
+            }
+            else if (((keys[right]&&keys[down])||((gp)&&(gp.axes[0]>0.15)&&(gp.axes[1]>0.15)))&&(!((keys[left])||(keys[up]))))
+            {
+                CompY+=CompSpeed*0.5;
+                CompX+=CompSpeed*0.5;
+            }  
+            else if (((keys[down])||((gp)&&(gp.axes[1]>0.8)&&(gp.axes[0]>-0.15)&&(gp.axes[0]<0.15)))&&(!((keys[left])||(keys[right])||(keys[up]))))
+            {
+                CompY+=CompSpeed;
+            }
+            if (!((Sget("CM Cursor").x+CompX>=Menu_pos[0]+6)&&(Sget("CM Cursor").y+CompY>=Menu_pos[1]+6)&&(Sget("CM Cursor").x+CompX<Menu_pos[0]+329)&&(Sget("CM Cursor").y+CompY<Menu_pos[1]+220)))
+            {
+                CompX=0;
+                CompY=0;
+            }  
+            else
+            {
+                Sset(Sget("CM Cursor"),Sget("CM Cursor").x+CompX,Sget("CM Cursor").y+CompY);
+            }
+            for (let i = 0; i< Comp_Menu_progs.length;i++)
+            {
+                Comp_Menu_progs[i].x+=Comp_Menu_progs[i].speed[0];
+                Comp_Menu_progs[i].y+=Comp_Menu_progs[i].speed[1];
+                Sset(Comp_Menu_progs[i].sprite,Math.round(Comp_Menu_progs[i].x),Math.round(Comp_Menu_progs[i].y))
+                if ((Comp_Menu_progs[i].sprite.x<=6+Menu_pos[0])||(Comp_Menu_progs[i].sprite.x>=309+Menu_pos[0]))
+                {
+                    Comp_Menu_progs[i].speed[0] = -Comp_Menu_progs[i].speed[0];
+                    Comp_Menu_progs[i].sprite.x +=(2*Math.round(Comp_Menu_progs[i].speed[0]))
+                }
+                if ((Comp_Menu_progs[i].sprite.y<=6+Menu_pos[1])||((Comp_Menu_progs[i].sprite.y>=197+Menu_pos[1])))
+                {
+                    Comp_Menu_progs[i].speed[1] = -Comp_Menu_progs[i].speed[1];
+                    Comp_Menu_progs[i].sprite.y +=(2*Math.round(Comp_Menu_progs[i].speed[1]))
+                }
+
+                Current_Sprite = Sget("CM Cursor");
+                Other_Sprite = Comp_Menu_progs[i].sprite;
+                if ((Other_Sprite.active)&&(Other_Sprite.y!=null)&&(((Current_Sprite.y<Other_Sprite.y+Other_Sprite.height)&&(Current_Sprite.y+Current_Sprite.height>Other_Sprite.y)&&(Current_Sprite.x<Other_Sprite.x+Other_Sprite.width)&&(Current_Sprite.x+Current_Sprite.width>Other_Sprite.x))))
+                {
+                    if (Other_Sprite.name.substring(3, 7)=="Viru")
+                    {
+                        Comp_Menu_progress++;
+                        Other_Sprite.active=false;
+                    }                    
+                    else
+                    {
+                        Comp_Menu_progress--;
+                        if (Comp_Menu_progress>=0)
+                        {
+                            //new vir in
+                            for (let k =0;k<Comp_Menu_progs.length;k++)
+                            {
+                                if ((Comp_Menu_progs[k].sprite.name.substring(3, 7)=="Viru")&&(!Comp_Menu_progs[k].sprite.active))
+                                {
+                                    New_Food = Comp_Menu_progs[k].sprite;
+                                    Norm = true;
+                                    while(Norm)
+                                    {
+                                        Norm=false;
+                                        Sset(New_Food,randomInt(Menu_pos[0]+6,Menu_pos[0]+316),randomInt(Menu_pos[1]+6,Menu_pos[1]+197));
+                                        for (let j=0;j<13;j++)
+                                        {
+                                            Other_Sprite1 = Sget((["CM Cursor","CM Virus 0","CM Virus 1","CM Virus 2","CM Virus 3","CM Virus 4","CM Virus 5","CM App 0","CM App 1","CM App 2","CM App 3","CM App 4","CM App 5",])[j]);
+                                            if ((New_Food.name!=Other_Sprite1.name)&&(Other_Sprite1.y!=null)&&(((New_Food.y<Other_Sprite1.y+Other_Sprite1.height)&&(New_Food.y+New_Food.height>Other_Sprite1.y)&&(New_Food.x<Other_Sprite1.x+Other_Sprite1.width)&&(New_Food.x+New_Food.width>Other_Sprite1.x))))
+                                            {
+                                                Norm=true;
+                                                j=13;
+                                            }
+                                        }
+                                    }
+                                    New_Food.active=true;
+                                    Comp_Menu_progs[k].x = New_Food.x;
+                                    Comp_Menu_progs[k].y = New_Food.y;
+                                    Comp_Menu_progs[k].speed[0]=randomInt(-10,11)/10;
+                                    Comp_Menu_progs[k].speed[1]=randomInt(-10,11)/10;
+                                    k=Comp_Menu_progs.length;
+                                }
+                            }
+                        }
+                        if (Comp_Menu_progress<0)
+                        {
+                            Comp_Menu_progress=0;                              
+                        }
+                        Norm = true;
+                        while(Norm)
+                        {
+                            Norm=false;
+                            Sset(Other_Sprite,randomInt(Menu_pos[0]+6,Menu_pos[0]+316),randomInt(Menu_pos[1]+6,Menu_pos[1]+197));
+                            for (let j=0;j<13;j++)
+                            {
+                                Other_Sprite1 = Sget((["CM Cursor","CM Virus 0","CM Virus 1","CM Virus 2","CM Virus 3","CM Virus 4","CM Virus 5","CM App 0","CM App 1","CM App 2","CM App 3","CM App 4","CM App 5",])[j]);
+                                if ((Other_Sprite.name!=Other_Sprite1.name)&&(Other_Sprite1.y!=null)&&(((Other_Sprite.y<Other_Sprite1.y+Other_Sprite1.height)&&(Other_Sprite.y+Other_Sprite.height>Other_Sprite1.y)&&(Other_Sprite.x<Other_Sprite1.x+Other_Sprite1.width)&&(Other_Sprite.x+Other_Sprite.width>Other_Sprite1.x))))
+                                {
+                                    Norm=true;
+                                    j=13;
+                                }
+                            }
+                        }
+                        Comp_Menu_progs[i].x = Other_Sprite.x;
+                        Comp_Menu_progs[i].y = Other_Sprite.y;
+                        Comp_Menu_progs[i].speed[0]=randomInt(-10,11)/10;
+                        Comp_Menu_progs[i].speed[1]=randomInt(-10,11)/10;
+                    }
+                }
+            }
+            if ((events[3].hp==0)||((!player.action_buffer)&&((keys[act])||((gp)&&(gp.buttons[1].pressed)))))
+            {
+                Comp_Menu_Used_By=null;
+                player.control_Delay=0;
+                player.action_buffer=true;
+                Temp_array = ["CM Cursor","CM Virus 0","CM Virus 1","CM Virus 2","CM Virus 3","CM Virus 4","CM Virus 5","CM App 0","CM App 1","CM App 2","CM App 3","CM App 4","CM App 5","CM Base",];
+                for (let i=0;i<Temp_array.length;i++)
+                {
+                    Sget((Temp_array)[i]).active=false;
+                }
+                if(Comp_Menu_progress==6)
+                {
+                    Reset_Event(events[3]);
+                }
+            }
+        }
+        else if ((Electro_Menu_Used_By!=null)&&(Electro_Menu_Used_By.idl==player.idl))
+        {
+            Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
+            if (player.idl=="player_2_Idl")
+            {
+                Menu_pos[0]+=350-Sget("EM Base").width;
+            }
+            if (Electro_Menu_Buffer&&(!((((keys[up])||((gp)&&(gp.axes[1]<-0.8)&&(gp.axes[0]>-0.15)&&(gp.axes[0]<0.15)))&&(!((keys[left])||(keys[right])||(keys[down]))))||(((keys[down])||((gp)&&(gp.axes[1]>0.8)&&(gp.axes[0]>-0.15)&&(gp.axes[0]<0.15)))&&(!((keys[left])||(keys[right])||(keys[up])))))))
+            {
+                Electro_Menu_Buffer=false;
+            }
+            if ((!Electro_Menu_Buffer)&&(((keys[up])||((gp)&&(gp.axes[1]<-0.8)&&(gp.axes[0]>-0.15)&&(gp.axes[0]<0.15)))&&(!((keys[left])||(keys[right])||(keys[down])))))
+            {
+                if (Electro_Menu_Selected>0)
+                {
+                    Electro_Menu_Selected--
+                }
+                else
+                {
+                    Electro_Menu_Selected=3;
+                }
+                Electro_Menu_Buffer=true;
+            }
+            else if (((keys[left])||((gp)&&(gp.axes[0]<-0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[up])||(keys[right])||(keys[down]))))
+            {
+                if(Electro_Menu_Selected==0)
+                {
+                    if (Electro_Menu_BX>0)
+                    {
+                        Electro_Menu_BX--;
+                    }
+                }
+                else if(Electro_Menu_Selected==1)
+                {
+                    if (Electro_Menu_BY>0)
+                    {
+                        Electro_Menu_BY--;
+                    }
+                }
+                else if(Electro_Menu_Selected==2)
+                {
+                    if (Electro_Menu_SX>0)
+                    {
+                        Electro_Menu_SX--;
+                    }
+                }
+                else if(Electro_Menu_Selected==3)
+                {
+                    if (Electro_Menu_SY>0)
+                    {
+                        Electro_Menu_SY--;
+                    }
+                }
+            }
+            else if (((keys[right])||((gp)&&(gp.axes[0]>0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[left])||(keys[up])||(keys[down]))))
+            {
+                if(Electro_Menu_Selected==0)
+                {
+                    if (Electro_Menu_BX<100)
+                    {
+                        Electro_Menu_BX++;
+                    }
+                }
+                else if(Electro_Menu_Selected==1)
+                {
+                    if (Electro_Menu_BY<100)
+                    {
+                        Electro_Menu_BY++;
+                    }
+                }
+                else if(Electro_Menu_Selected==2)
+                {
+                    if (Electro_Menu_SX<100)
+                    {
+                        Electro_Menu_SX++;
+                    }
+                }
+                else if(Electro_Menu_Selected==3)
+                {
+                    if (Electro_Menu_SY<100)
+                    {
+                        Electro_Menu_SY++;
+                    }
+                }
+            }
+            else if ((!Electro_Menu_Buffer)&&(((keys[down])||((gp)&&(gp.axes[1]>0.8)&&(gp.axes[0]>-0.15)&&(gp.axes[0]<0.15)))&&(!((keys[left])||(keys[right])||(keys[up])))))
+            {
+                if (Electro_Menu_Selected<3)
+                {
+                    Electro_Menu_Selected++
+                }
+                else
+                {
+                    Electro_Menu_Selected=0;
+                }
+                Electro_Menu_Buffer=true;
+            }
+            Sset(Sget("EM Select"),Menu_pos[0],Menu_pos[1]+(Electro_Menu_Selected*32));
+            Sget("EM Heals BX").width = Math.round((Electro_Menu_BX/100)*71);
+            Sget("EM Heals BY").width = Math.round((Electro_Menu_BY/100)*71);
+            Sget("EM Heals SX").width = Math.round((Electro_Menu_SX/100)*71);
+            Sget("EM Heals SY").width = Math.round((Electro_Menu_SY/100)*71);
+            Sget("EM Heals D").width = Math.round((Electro_Menu_progress/100)*75);
+            Sset(Sget("EM Big"),89+Math.round(Menu_pos[0]+(82*(Electro_Menu_BX/100))),6+Math.round(Menu_pos[1]+(81*((100-Electro_Menu_BY)/100))));
+            Sset(Sget("EM Small"),Sget("EM Big").x+Math.round((53*(Electro_Menu_SX/100))),Sget("EM Big").y+Math.round((51*((100-Electro_Menu_SY)/100))));
+            Other_Sprite = Sget("EM Small");
+            Current_Sprite = Sget("EM Light");
+            if ((Other_Sprite.y!=null)&&(((Current_Sprite.y>=Other_Sprite.y)&&(Current_Sprite.y+Current_Sprite.height<Other_Sprite.height+Other_Sprite.y)&&(Current_Sprite.x>=Other_Sprite.x)&&(Current_Sprite.x+Current_Sprite.width<=Other_Sprite.width+Other_Sprite.x))))
+            {
+                if (Electro_Menu_progress<100)
+                {
+                    Electro_Menu_progress++;
+                }
+            }
+            else
+            {
+                if (Electro_Menu_progress>0)
+                {
+                    Electro_Menu_progress--;
+                }
+            }
+            if ((events[4].hp==0)||(Electro_Menu_progress==100)||((!player.action_buffer)&&((keys[act])||((gp)&&(gp.buttons[1].pressed)))))
+            {
+                Electro_Menu_Used_By=null;
+                player.control_Delay=0;
+                player.action_buffer=true;
+                Temp_array = ["EM Heals D","EM Heals BX","EM Heals BY","EM Heals SX","EM Heals SY","EM Light","EM Small","EM Big","EM Select","EM Base",];
+                for (let i=0;i<Temp_array.length;i++)
+                {
+                    Sget((Temp_array)[i]).active=false;
+                }
+                if(Electro_Menu_progress==100)
+                {
+                    Reset_Event(events[4]);
+                }
+            }
+        }
+        else if ((Cabel_Menu_Used_By!=null)&&(Cabel_Menu_Used_By.idl==player.idl))
+        {
+            Wires_Array = [["CaM G 0","CaM G 1","CaM G 2"],["CaM B 0","CaM B 1","CaM B 2"],["CaM O 0","CaM O 1","CaM O 2"]];
+            Sget(Wires_Array[Cabel_Menu_selected][Cabel_Menu_selected_2]).active = false;
+            Sget((["CaM G Selected","CaM B Selected","CaM O Selected"])[Cabel_Menu_selected]).active = true;
+            for (let i =0;i<3;i++)
+            {
+                if (Cabel_Menu_progress[i*2]==Cabel_Menu_selected_2)
+                {
+                    Sget((["CaM G Selected 2","CaM B Selected 2","CaM O Selected 2"])[i]).active = true;
+                    Sget((["CaM G Selected","CaM B Selected","CaM O Selected"])[i]).active = true;
+                    Sget(Wires_Array[i][Cabel_Menu_progress[i*2]]).active = false;
+                }
+            }
+            Sset(Sget("CaM G Selected 2"),player.menu_pos[0],player.menu_pos[1]+(Cabel_Menu_progress[0]*68));
+            Sset(Sget("CaM B Selected 2"),player.menu_pos[0],player.menu_pos[1]+(Cabel_Menu_progress[2]*68));
+            Sset(Sget("CaM O Selected 2"),player.menu_pos[0],player.menu_pos[1]+(Cabel_Menu_progress[4]*68));
+            Sset(Sget("CaM G Selected"),player.menu_pos[0],player.menu_pos[1]);
+            Sset(Sget("CaM B Selected"),player.menu_pos[0],player.menu_pos[1]+(1*68))
+            Sset(Sget("CaM O Selected"),player.menu_pos[0],player.menu_pos[1]+(2*68));
+            Sset(Sget((["CaM G Selected","CaM B Selected","CaM O Selected"])[Cabel_Menu_selected]),player.menu_pos[0]+20,Sget((["CaM G Selected","CaM B Selected","CaM O Selected"])[Cabel_Menu_selected]).y);
+            if (Electro_Menu_Buffer&&(!((((keys[up])||((gp)&&(gp.axes[1]<-0.8)&&(gp.axes[0]>-0.15)&&(gp.axes[0]<0.15)))&&(!((keys[left])||(keys[right])||(keys[down]))))||((((keys[right])||((gp)&&(gp.axes[0]>0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[left])||(keys[up])||(keys[down])))))||((((keys[left])||((gp)&&(gp.axes[0]<-0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[up])||(keys[right])||(keys[down])))))||(((keys[down])||((gp)&&(gp.axes[1]>0.8)&&(gp.axes[0]>-0.15)&&(gp.axes[0]<0.15)))&&(!((keys[left])||(keys[right])||(keys[up])))))))
+            {
+                Electro_Menu_Buffer=false;
+            }
+            if ((!Electro_Menu_Buffer)&&(((keys[up])||((gp)&&(gp.axes[1]<-0.8)&&(gp.axes[0]>-0.15)&&(gp.axes[0]<0.15)))&&(!((keys[left])||(keys[right])||(keys[down])))))
+            {
+                if (Cabel_Menu_In_Wire)
+                {
+                    Cabel_Menu_selected_2--;
+                    if (Cabel_Menu_selected_2==-1)
+                    {
+                        Cabel_Menu_selected_2=2;
+                    }
+                    for (let i=0;i<3;i++)
+                    {
+                        if ((Cabel_Menu_progress[i*2]==Cabel_Menu_selected_2)&&(Cabel_Menu_progress[(i*2)+1]==Cabel_Menu_selected_2))
+                        {
+                            Cabel_Menu_progress[(i*2)+1]=-1;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Cabel_Menu_selected--;
+                    if (Cabel_Menu_selected==-1)
+                    {
+                        Cabel_Menu_selected=2;
+                    }
+                    for (let i=0;i<3;i++)
+                    {
+                        if ((Cabel_Menu_progress[i*2]==Cabel_Menu_progress[(i*2)+1])&&(i==Cabel_Menu_selected))
+                        {
+                            Cabel_Menu_progress[(i*2)+1]=-1;
+                            break;
+                        }
+                    }
+                }
+                Electro_Menu_Buffer=true;
+            }
+            else if ((!Electro_Menu_Buffer)&&((keys[left])||((gp)&&(gp.axes[0]<-0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[up])||(keys[right])||(keys[down]))))
+            {
+                Cabel_Menu_In_Wire = false;
+                for (let i = 0; i <3;i++)
+                {
+                    if (Cabel_Menu_progress[i*2]!=Cabel_Menu_progress[(i*2)+1])
+                    {
+                        Cabel_Menu_selected = i;
+                        break;
+                    }
+                }
+                Electro_Menu_Buffer=true;
+            }
+            else if ((!Electro_Menu_Buffer)&&((keys[right])||((gp)&&(gp.axes[0]>0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[left])||(keys[up])||(keys[down]))))
+            {
+                Cabel_Menu_In_Wire = true;
+                buttonRight.value="";
+                Cabel_Menu_selected_2=0;
+                for (let i = 0; i <3;i++)
+                {
+                    buttonRight.value+=("["+i+"|"+(Cabel_Menu_progress[i*2]!=Cabel_Menu_progress[(i*2)+1])+"|"+(Cabel_Menu_progress[i*2]>Cabel_Menu_selected_2)+"]");
+                    if ((Cabel_Menu_progress[i*2]!=Cabel_Menu_progress[(i*2)+1])&&(Cabel_Menu_progress[i*2]>Cabel_Menu_selected_2))
+                    {
+                        Cabel_Menu_selected_2 = Cabel_Menu_progress[i*2];
+                    }
+                }
+                Electro_Menu_Buffer=true;
+            }
+            else if ((!Electro_Menu_Buffer)&&(((keys[down])||((gp)&&(gp.axes[1]>0.8)&&(gp.axes[0]>-0.15)&&(gp.axes[0]<0.15)))&&(!((keys[left])||(keys[right])||(keys[up])))))
+            {
+                if (Cabel_Menu_In_Wire)
+                {
+                    Cabel_Menu_selected_2++;
+                    if (Cabel_Menu_selected_2==3)
+                    {
+                        Cabel_Menu_selected_2=0;
+                    }
+                    for (let i=0;i<3;i++)
+                    {
+                        if ((Cabel_Menu_progress[i*2]==Cabel_Menu_selected_2)&&(Cabel_Menu_progress[(i*2)+1]==Cabel_Menu_selected_2))
+                        {
+                            Cabel_Menu_progress[(i*2)+1]=-1;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Cabel_Menu_selected++;
+                    if (Cabel_Menu_selected==3)
+                    {
+                        Cabel_Menu_selected=0;
+                    }
+                    for (let i=0;i<3;i++)
+                    {
+                        if ((Cabel_Menu_progress[i*2]==Cabel_Menu_progress[(i*2)+1])&&(i==Cabel_Menu_selected))
+                        {
+                            Cabel_Menu_progress[(i*2)+1]=-1;
+                            break;
+                        }
+                    }
+                }
+                Electro_Menu_Buffer=true;
+            }
+            if (Cabel_Menu_In_Wire)
+            {                
+                Cabel_Menu_progress[(Cabel_Menu_selected*2)+1]=Cabel_Menu_selected_2;
+                Sget(Wires_Array[Cabel_Menu_selected][Cabel_Menu_selected_2]).active = true;
+                Sget((["CaM G Selected","CaM B Selected","CaM O Selected"])[Cabel_Menu_selected]).active = false;
+                for (let i =0;i<3;i++)
+                {
+                    if (Cabel_Menu_progress[i*2]==Cabel_Menu_selected_2)
+                    {
+                        Sget((["CaM G Selected 2","CaM B Selected 2","CaM O Selected 2"])[i]).active = false;
+                    }
+                }
+            }
+            is_Done = true;
+            for (let i =0;i<3;i++)
+            {
+                if (Cabel_Menu_progress[i*2]==Cabel_Menu_progress[(i*2)+1])
+                {
+                    Sget((["CaM G Selected","CaM B Selected","CaM O Selected"])[i]).active = false;
+                    Sget((["CaM G Selected 2","CaM B Selected 2","CaM O Selected 2"])[i]).active = false;
+                    Sget(Wires_Array[i][Cabel_Menu_progress[i*2]]).active = true;
+                }
+                else
+                {                    
+                    is_Done = false;
+                }
+            }
+            if ((events[5].hp==0)||(is_Done)||((!player.action_buffer)&&((keys[act])||((gp)&&(gp.buttons[1].pressed)))))
+            {
+                Cabel_Menu_Used_By=null;
+                player.control_Delay=0;
+                player.action_buffer=true;
+                Temp_array = ["CaM G Selected","CaM B Selected","CaM O Selected","CaM G Selected 2","CaM B Selected 2","CaM O Selected 2","CaM Base","CaM G","CaM B","CaM O","CaM G 0","CaM B 0","CaM O 0","CaM G 1","CaM B 1","CaM O 1","CaM G 2","CaM B 2","CaM O 2",];
+                for (let i=0;i<Temp_array.length;i++)
+                {
+                    Sget((Temp_array)[i]).active=false;
+                }
+                if(is_Done)
+                {
+                    Reset_Event(events[5]);
+                }
+            }
+        }
     }
 }
 
@@ -397,8 +1116,10 @@ function draw() {
 }
 
 function loop() {
-    Calcs(player1,1,"a","w","d","r","shift");
-    Calcs(player2,0,"j","i","l","p","enter");
+    //buttonRight.value = player1.speed[0];
+    Calcs(player1,1,"a","w","d","r","shift","s");
+    Calcs(player2,0,"j","i","l","p","enter","k");
+    Cocktail_Update();
     draw();
     Sprites_Update();
     Events_Update();
@@ -425,12 +1146,17 @@ async function startGame() {
 
     await loadSprites();
     
-    player1.width = sprites.find(s => s.name === "player_1_Idl").width;
-    player1.height = sprites.find(s => s.name === "player_1_Idl").height;
-    player2.width = sprites.find(s => s.name === "player_2_Idl").width;
-    player2.height = sprites.find(s => s.name === "player_2_Idl").height;
+    if(Sprites_Ready) {
+        player1.width = sprites.find(s => s.name === "player_1_Idl").width;
+        player1.height = sprites.find(s => s.name === "player_1_Idl").height;
+        player2.width = sprites.find(s => s.name === "player_2_Idl").width;
+        player2.height = sprites.find(s => s.name === "player_2_Idl").height;
+        Prioritise_Sprites();
+        buttonRight.value = Sprites_Ready;
+        buttonRight.value += sprites.indexOf(Sget("SM Base"));
     Set_Events();
-    loop();          
+    loop(); 
+    }         
 }
 
 function Sprites_Update(){
@@ -440,19 +1166,18 @@ function Sprites_Update(){
             if (sprites[i].speed<=0)
             {
                 sprites[i].frame++;
-                sprites[i].speed=sprites[i].frames[sprites[i].frame*2+1];
                 if (sprites[i].frame==sprites[i].frames.length/2)
                 {
                     if (sprites[i].replay)
                     {
                         sprites[i].frame = 0;
-                        sprites[i].speed=sprites[i].frames[sprites[i].frame*2+1];
                     }
                     else
                     {
                         sprites[i].frame--;
                     }
                 }
+                sprites[i].speed=sprites[i].frames[sprites[i].frame*2+1];
             }
             sprites[i].speed--;
         }
@@ -496,7 +1221,7 @@ function Set_Events()
             hp: 3600,
             hp_def: 3600,
             recovered:0,
-            Action_area: [Sget("Sea Wall Undam").x+Sget("Sea Wall Undam").width,Sget("Sea Wall Undam").y,Sget("Sea Wall Undam").x+(2*Sget("Sea Wall Undam").width),Sget("Sea Wall Undam").y+Sget("Sea Wall Undam").height]
+            Action_area: [Sget("Sea Wall Undam").x+Sget("Sea Wall Undam").width-1,Sget("Sea Wall Undam").y,Sget("Sea Wall Undam").x+(2*Sget("Sea Wall Undam").width),Sget("Sea Wall Undam").y+Sget("Sea Wall Undam").height]
         },
 
         {
@@ -515,10 +1240,78 @@ function Set_Events()
             recovered:0,
             Action_area: [Sget("Sat").x-(Sget("Sat").width/2),Sget("Sat").y,Sget("Sat").x,Sget("Sat").y+Sget("Sat").height]
         },
+
+        {
+            name:"Fish",
+            idl: "Fish", 
+            dameged:"Fish Dam", 
+            destroyed:"Fish Des", 
+            idl_ico:"Fish Ico", 
+            dameged_ico:"Fish Ico Dam", 
+            destroyed_ico:"Fish Ico Des", 
+            high:"Fish High", 
+            active:false, 
+            just_recovered:false,
+            hp: 3600,
+            hp_def: 3600,
+            recovered:0,
+            Action_area: [Sget("Fish").x-(Sget("Fish").width),Sget("Fish").y-20,Sget("Fish").x+(Sget("Fish").width),Sget("Fish").y+Sget("Fish").height]
+        },
+
+        {
+            name:"Comp",
+            idl: "Comp", 
+            dameged:"Comp Dam", 
+            destroyed:"Comp Des", 
+            idl_ico:"Comp Ico", 
+            dameged_ico:"Comp Ico Dam", 
+            destroyed_ico:"Comp Ico Des", 
+            high:"Comp High", 
+            active:false, 
+            just_recovered:false,
+            hp: 3600,
+            hp_def: 3600,
+            recovered:0,
+            Action_area: [Sget("Comp").x,Sget("Comp").y-20,Sget("Comp").x+(Sget("Comp").width),Sget("Comp").y+Sget("Comp").height]
+        },
+
+        {
+            name:"Electro",
+            idl: "Electro", 
+            dameged:"Electro Dam", 
+            destroyed:"Electro Des", 
+            idl_ico:"Electro Ico", 
+            dameged_ico:"Electro Ico Dam", 
+            destroyed_ico:"Electro Ico Des", 
+            high:"Electro High", 
+            active:false, 
+            just_recovered:false,
+            hp: 3600,
+            hp_def: 3600,
+            recovered:0,
+            Action_area: [Sget("Electro").x+20,Sget("Electro").y,Sget("Electro").x+(Sget("Electro").width)-40,Sget("Electro").y+Sget("Electro").height]
+        },
+
+        {
+            name:"Cabel",
+            idl: "Cabel", 
+            dameged:"Cabel Dam", 
+            destroyed:"Cabel Des", 
+            idl_ico:"Cabel Ico", 
+            dameged_ico:"Cabel Ico Dam", 
+            destroyed_ico:"Cabel Ico Des", 
+            high:"Cabel High", 
+            active:false, 
+            just_recovered:false,
+            hp: 1400,
+            hp_def: 1400,
+            recovered:0,
+            Action_area: [Sget("Cabel").x-(Sget("Cabel").width*2),Sget("Cabel").y-Sget("Cabel").height*2,Sget("Cabel").x,Sget("Cabel").y+Sget("Cabel").height]
+        }
     ];
 }
 
-let Events_Update_cooldown = 600;
+let Events_Update_cooldown = 100;
 
 function Events_Update(){
     avaible_events = events.length;
@@ -526,7 +1319,7 @@ function Events_Update(){
     {
         if (events[i].active==true)
         {
-            if ((events[i].hp>0)&&(((player1.x>=events[i].Action_area[0])&&(player1.x<=events[i].Action_area[2])&&(player1.y>=events[i].Action_area[1])&&(player1.y<events[i].Action_area[3]))||((player2.x>=events[i].Action_area[0])&&(player2.x<=events[i].Action_area[2])&&(player2.y>=events[i].Action_area[1])&&(player2.y<events[i].Action_area[3]))))
+            if ((events[i].hp>0)&&(((player1.x>=((Scene.width/2-Background.width/2)+events[i].Action_area[0]))&&(player1.x<=((Scene.width/2-Background.width/2)+events[i].Action_area[2]))&&(player1.y>=((Scene.height/2-Background.height/2)+events[i].Action_area[1]))&&(player1.y<((Scene.height/2-Background.height/2)+events[i].Action_area[3])))||((player2.x>=((Scene.width/2-Background.width/2)+events[i].Action_area[0]))&&(player2.x<=((Scene.width/2-Background.width/2)+events[i].Action_area[2]))&&(player2.y>=((Scene.height/2-Background.height/2)+events[i].Action_area[1]))&&(player2.y<((Scene.height/2-Background.height/2)+events[i].Action_area[3])))))
             {
                 HighLight_Event(events[i]);
             }
@@ -564,7 +1357,7 @@ function Events_Update(){
                 event_To_triger.just_recovered=false;
             }
         }
-        Events_Update_cooldown = 600;   
+        Events_Update_cooldown = 100;   
     }
     else
     {
@@ -615,7 +1408,7 @@ function Action_Button_Pressed(player)
         if (events[i].active==true)
         {
             if (((player.x>=events[i].Action_area[0])&&(player.x<=events[i].Action_area[2])&&(player.y>=events[i].Action_area[1])&&(player.y<events[i].Action_area[3])))
-            {
+            {                                
                 if (events[i].name=="Sea Wall")
                 {
                     Sget(player.idl).active = false;
@@ -632,19 +1425,24 @@ function Action_Button_Pressed(player)
                     Sget("SM Base").active = true;
                     Sget("SM No Signal").active = true;
 
-                    Sset(Sget("SM Base"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM No Signal"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Yes Signal"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Anten 0"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Anten 1"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Anten 2"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Anten 3"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Anten 4"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Signal 0"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Signal 1"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Signal 2"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Signal 3"),player.menu_pos[0],player.menu_pos[1]);
-                    Sset(Sget("SM Signal 4"),player.menu_pos[0],player.menu_pos[1]);
+                    Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
+                    if (player.idl=="player_2_Idl")
+                    {
+                        Menu_pos[0]+=350-Sget("SM Base").width;
+                    }
+                    Sset(Sget("SM Base"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM No Signal"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Yes Signal"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Anten 0"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Anten 1"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Anten 2"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Anten 3"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Anten 4"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Signal 0"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Signal 1"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Signal 2"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Signal 3"),Menu_pos[0],Menu_pos[1]);
+                    Sset(Sget("SM Signal 4"),Menu_pos[0],Menu_pos[1]);
                     for (let i = 0;i<5;i++)
                     {
                         Sget((["SM Signal 0","SM Signal 1","SM Signal 2","SM Signal 3","SM Signal 4"])[i]).active=false;
@@ -663,7 +1461,218 @@ function Action_Button_Pressed(player)
                     }
                     Sget((["SM Anten 0","SM Anten 1","SM Anten 2","SM Anten 3","SM Anten 4"])[Satelite_Manu_progress]).active=true;
                 }
+                else if ((events[i].name=="Fish")&&(Fish_Menu_Used_By==null))
+                {
+                    Temp_array = ["FM Food 0","FM Food 1","FM Food 2","FM Food 3","FM Food 4","FM Food 5","FM Enemy 0","FM Enemy 1","FM Enemy 2","FM Enemy 3","FM Enemy 4","FM Enemy 5","FM Fish 0","FM Fish 1","FM Fish 2","FM Fish 3","FM Fish 4","FM Fish 5","FM Fish 6","FM Fish 7","FM HP 6","FM HP 5","FM HP 4","FM HP 3","FM HP 2","FM HP 1","FM HP 0","FM Base",];
+                    Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
+                    if (player.idl=="player_2_Idl")
+                    {
+                        Menu_pos[0]+=350-Sget("FM Base").width;
+                    }
+                    for (let i=0;i<Temp_array.length;i++)
+                    {
+                        Sget((Temp_array)[i]).active=true;
+                        if(i>=20)
+                        {
+                            Sset(Sget((Temp_array)[i]),Menu_pos[0],Menu_pos[1]);
+                        }
+                        else if ((i>=12)&&(i<20))
+                        {
+                            Sset(Sget((Temp_array)[i]),Menu_pos[0]+111,Menu_pos[1]+101);
+                            Sget((Temp_array)[i]).active=false;
+                        }
+                    }
+                    Sget((Temp_array)[16]).active=true;
+                    Fish_Menu_Used_By = player;
+                    player.control_Delay = -1;
+                    Fish_Menu_progress = 0;
+                    
+                    for (let i=0;i<12;i++)
+                    {
+                        Current_Sprite = Sget((Temp_array)[i]);
+                        Norm = true;
+                        while(Norm)
+                        {
+                            Norm=false;
+                            Sset(Current_Sprite,randomInt(Menu_pos[0]+6,Menu_pos[0]+216),randomInt(Menu_pos[1]+6,Menu_pos[1]+197));
+                            for (let j=0;j<13;j++)
+                            {
+                                Other_Sprite = Sget((Temp_array)[j]);
+                                if (( i!=j )&&(Other_Sprite.y!=null)&&(((Current_Sprite.y<Other_Sprite.y+Other_Sprite.height)&&(Current_Sprite.y+Current_Sprite.height>Other_Sprite.y)&&(Current_Sprite.x<Other_Sprite.x+Other_Sprite.width)&&(Current_Sprite.x+Current_Sprite.width>Other_Sprite.x))))
+                                {
+                                    Norm=true;
+                                    j=12;
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+                else if ((events[i].name=="Comp")&&(Comp_Menu_Used_By==null))
+                {
+                    Temp_array = ["CM Base","CM Cursor","CM Virus 0","CM Virus 1","CM Virus 2","CM Virus 3","CM Virus 4","CM Virus 5","CM App 0","CM App 1","CM App 2","CM App 3","CM App 4","CM App 5"];
+                    Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
+                    Sget(Temp_array[0]).active=true;
+                    Sset(Sget(Temp_array[0]),Menu_pos[0],Menu_pos[1]);
+                    Sget(Temp_array[1]).active=true;
+                    Sset(Sget(Temp_array[1]),Menu_pos[0]+(Sget(Temp_array[0]).width/2),Menu_pos[1]+(Sget(Temp_array[0]).height/2));
+                    Comp_Menu_Used_By = player;
+                    player.control_Delay = -1;
+                    Comp_Menu_progress = 0;
+                    Comp_Menu_progs=[];
+                    for (let i =2; i < Temp_array.length;i++)
+                    {
+                        Current_Sprite = Sget((Temp_array)[i]);
+                        Norm = true;
+                        while(Norm)
+                        {
+                            Norm=false;
+                            Sset(Current_Sprite,randomInt(Menu_pos[0]+6,Menu_pos[0]+314),randomInt(Menu_pos[1]+6,Menu_pos[1]+197));
+                            for (let j=2;j<Temp_array.length;j++)
+                            {
+                                Other_Sprite = Sget((Temp_array)[j]);
+                                if (( i!=j )&&(Other_Sprite.y!=null)&&(((Current_Sprite.y<Other_Sprite.y+Other_Sprite.height)&&(Current_Sprite.y+Current_Sprite.height>Other_Sprite.y)&&(Current_Sprite.x<Other_Sprite.x+Other_Sprite.width)&&(Current_Sprite.x+Current_Sprite.width>Other_Sprite.x))))
+                                {
+                                    Norm=true;
+                                    j=Temp_array.length;
+                                }
+                            }
+                        }
+                        Comp_Menu_progs.push({
+                            id: 1,
+                            sprite: Current_Sprite,
+                            speed:[0.0,0.0],
+                            x: Current_Sprite.x,
+                            y: Current_Sprite.y
+                        });
+                        Comp_Menu_progs[i-2].speed[0]=randomInt(-10,11)/10;
+                        Comp_Menu_progs[i-2].speed[1]=randomInt(-10,11)/10;
+                        Current_Sprite.active = true;
+                    }
+                }
+                else if ((events[i].name=="Electro")&&(Electro_Menu_Used_By==null))
+                {
+                    Electro_Menu_Used_By = player;
+                    player.control_Delay = -1;
+                    Electro_Menu_progress = 0;
+                    Electro_Menu_Buffer = false;
+                    Temp_array = ["EM Heals D","EM Heals BX","EM Heals BY","EM Heals SX","EM Heals SY","EM Light","EM Small","EM Big","EM Select","EM Base",];
+                    for (let i=0;i<Temp_array.length;i++)
+                    {
+                        Sget(Temp_array[i]).active = true;
+                    }
+                    Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
+                    if (player.idl=="player_2_Idl")
+                    {
+                        Menu_pos[0]+=350-Sget("EM Base").width;
+                    }
+                    Sset(Sget("EM Base"),Menu_pos[0],Menu_pos[1]);
+                    Electro_Menu_Selected=0;
+                    Sset(Sget("EM Select"),Menu_pos[0],Menu_pos[1]+(Electro_Menu_Selected*22));
+                    Sset(Sget("EM Big"),randomInt(Menu_pos[0]+89,Menu_pos[0]+171),randomInt(Menu_pos[1]+6,Menu_pos[1]+87));
+                    Sset(Sget("EM Small"),randomInt(Sget("EM Big").x,Sget("EM Big").x+Sget("EM Big").width-30),randomInt(Sget("EM Big").y,Sget("EM Big").y+Sget("EM Big").height-30));
+                    Current_Sprite = Sget("EM Light");
+                    Norm = true;
+                    while(Norm)
+                    {
+                        Norm=false;
+                        Sset(Current_Sprite,randomInt(Menu_pos[0]+89+5,Menu_pos[0]+234-5),randomInt(Menu_pos[1]+6+5,Menu_pos[1]+147-5));
+                        Other_Sprite = Sget("EM Small");
+                        if ((Other_Sprite.y!=null)&&(((Current_Sprite.y<Other_Sprite.y+Other_Sprite.height)&&(Current_Sprite.y+Current_Sprite.height>Other_Sprite.y)&&(Current_Sprite.x<Other_Sprite.x+Other_Sprite.width)&&(Current_Sprite.x+Current_Sprite.width>Other_Sprite.x))))
+                        {
+                            Norm=true;
+                        }
+                    }
+                    Electro_Menu_BX =Math.round(((Sget("EM Big").x-Menu_pos[0]-89)/82)*100);
+                    Electro_Menu_BY =100-Math.round(((Sget("EM Big").y-Menu_pos[1]-6)/81)*100);
+                    Electro_Menu_SX =Math.round(((Sget("EM Small").x-Sget("EM Big").x)/53)*100);
+                    Electro_Menu_SY =100-Math.round(((Sget("EM Small").y-Sget("EM Big").y)/51)*100);
+                    Sset(Sget("EM Heals BX"),Menu_pos[0]+11,Menu_pos[1]+27+(0*32));
+                    Sget("EM Heals BX").width = Math.round((Electro_Menu_BX/100)*71);
+                    Sset(Sget("EM Heals BY"),Menu_pos[0]+11,Menu_pos[1]+27+(1*32));
+                    Sget("EM Heals BY").width = Math.round((Electro_Menu_BY/100)*71);
+                    Sset(Sget("EM Heals SX"),Menu_pos[0]+11,Menu_pos[1]+27+(2*32));
+                    Sget("EM Heals SX").width = Math.round((Electro_Menu_SX/100)*53);
+                    Sset(Sget("EM Heals SY"),Menu_pos[0]+11,Menu_pos[1]+27+(3*32));
+                    Sget("EM Heals SY").width = Math.round((Electro_Menu_SY/100)*51);
+                    Sset(Sget("EM Heals D"),Menu_pos[0]+9,Menu_pos[1]+159);
+                    Sget("EM Heals D").width = 0;                    
+                }
+                else if ((events[i].name=="Cabel")&&(Cabel_Menu_Used_By==null))
+                {
+                    Electro_Menu_Buffer = false;
+                    Cabel_Menu_Used_By = player;
+                    player.control_Delay = -1;
+                    Cabel_Menu_progress = [-1,-1,-1,-1,-1,-1];
+                    Cabel_Menu_selected = 0;
+                    Cabel_Menu_selected_2 = 0;
+                    Cabel_Menu_In_Wire=false;
+                    Temp_array = ["CaM G Selected","CaM B Selected","CaM O Selected","CaM G Selected 2","CaM B Selected 2","CaM O Selected 2","CaM Base","CaM G","CaM B","CaM O","CaM G 0","CaM B 0","CaM O 0","CaM G 1","CaM B 1","CaM O 1","CaM G 2","CaM B 2","CaM O 2",];
+                    for (let i=0;i<Temp_array.length;i++)
+                    {
+                        Sset(Sget(Temp_array[i]),player.menu_pos[0],player.menu_pos[1]);
+                        if (["CaM G Selected","CaM B Selected","CaM O Selected","CaM G Selected 2","CaM B Selected 2","CaM O Selected 2","CaM Base", "CaM G", "CaM B", "CaM O"].includes(Temp_array[i]))
+                        {
+                            Sget(Temp_array[i]).active = true;
+                        }
+                    }
+                    Cabel_Menu_progress[0]=randomInt(0,3);
+                    Cabel_Menu_progress[2]=Cabel_Menu_progress[0];
+                    while(Cabel_Menu_progress[2]==Cabel_Menu_progress[0])
+                    {
+                        Cabel_Menu_progress[2]=randomInt(0,3);
+                    }
+                    Cabel_Menu_progress[4]=Cabel_Menu_progress[0];
+                    while((Cabel_Menu_progress[4]==Cabel_Menu_progress[2])||(Cabel_Menu_progress[4]==Cabel_Menu_progress[0]))
+                    {
+                        Cabel_Menu_progress[4]=randomInt(0,3);
+                    }
+                    Sset(Sget("CaM G"),player.menu_pos[0],player.menu_pos[1]+(Cabel_Menu_progress[0]*68));
+                    Sset(Sget("CaM B"),player.menu_pos[0],player.menu_pos[1]+(Cabel_Menu_progress[2]*68));
+                    Sset(Sget("CaM O"),player.menu_pos[0],player.menu_pos[1]+(Cabel_Menu_progress[4]*68));
+                    Sset(Sget("CaM G Selected 2"),player.menu_pos[0],player.menu_pos[1]+(Cabel_Menu_progress[0]*68));
+                    Sset(Sget("CaM B Selected 2"),player.menu_pos[0],player.menu_pos[1]+(Cabel_Menu_progress[2]*68));
+                    Sset(Sget("CaM O Selected 2"),player.menu_pos[0],player.menu_pos[1]+(Cabel_Menu_progress[4]*68));
+                    Sset(Sget("CaM G Selected"),player.menu_pos[0],player.menu_pos[1]);
+                    Sset(Sget("CaM B Selected"),player.menu_pos[0],player.menu_pos[1]+(1*68))
+                    Sset(Sget("CaM O Selected"),player.menu_pos[0],player.menu_pos[1]+(2*68));
+                    Sset(Sget((["CaM G Selected","CaM B Selected","CaM O Selected"])[Cabel_Menu_selected]),player.menu_pos[0]+20,Sget((["CaM G Selected","CaM B Selected","CaM O Selected"])[Cabel_Menu_selected]).y);
+                }
             }
+        }
+    }
+
+    if ((Cocktail_Readyness[0]>=Cocktail_Readyness[1])&&((player.x>=584)&&(player.x<=637)&&(player.y>=279)&&(player.y<324)))
+    {
+        player.effects.push(["Speed2",1800,false]);
+        Sget("Coctail Ready").active = false;
+        Sget("Coctail Empty").active = true;
+        Sget("Coctail High").active = false;  
+        Cocktail_Readyness[0]=0;
+    }
+}
+
+Cocktail_Readyness = [0,2520];
+
+function Cocktail_Update()
+{
+    if (Cocktail_Readyness[0]>=Cocktail_Readyness[1])
+    {
+        Sget("Coctail Ready").active = true;
+        Sget("Coctail Empty").active = false;   
+        Sget("Coctail High").active = false;        
+    }
+    else
+    {
+        Cocktail_Readyness[0]++;
+    }
+    for (let i=0;i<2;i++)
+    {
+        if ((Cocktail_Readyness[0]>=Cocktail_Readyness[1])&&((([player1,player2])[i].x>=584)&&(([player1,player2])[i].x<=637)&&(([player1,player2])[i].y>=279)&&(([player1,player2])[i].y<324)))
+        {
+            Sget("Coctail Ready").active = false;
+            Sget("Coctail Empty").active = false;   
+            Sget("Coctail High").active = true;  
         }
     }
 }
