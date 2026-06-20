@@ -1098,7 +1098,7 @@ function Calcs(player,controler,left,up,right,act,enter,down) {
 
 function draw() {
     graphic.clearRect(0, 0, Scene.width, Scene.height);
-    graphic.drawImage(Background, Scene.width/2-Background.width/2, Scene.height/2-Background.height/2);
+    graphic.drawImage(Background, Math.round(Scene.width/2-Background.width/2)-1, Math.round(Scene.height/2-Background.height/2)-1);
     for (let i = 0; i<sprites.length;i++)
     {
         if (sprites[i].active){
