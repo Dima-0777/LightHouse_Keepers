@@ -1098,7 +1098,7 @@ function Calcs(player,controler,left,up,right,act,enter,down) {
 
 function draw() {
     graphic.clearRect(0, 0, Scene.width, Scene.height);
-    graphic.drawImage(Background, Math.round(Scene.width/2-Background.width/2)-1, Math.round(Scene.height/2-Background.height/2)-1);
+    graphic.drawImage(Background, Math.trunc(Scene.width/2-Background.width/2), Math.trunc(Scene.height/2-Background.height/2));
     for (let i = 0; i<sprites.length;i++)
     {
         if (sprites[i].active){
@@ -1106,8 +1106,8 @@ function draw() {
             Temp_Y = sprites[i].y;
             if (sprites[i].relative)
             {
-                Temp_X = Math.trunc(sprites[i].x+(Scene.width/2-Background.width/2));
-                Temp_Y = Math.trunc(sprites[i].y+(Scene.height/2-Background.height/2));
+                Temp_X = sprites[i].x+Math.trunc((Scene.width/2-Background.width/2));
+                Temp_Y = sprites[i].y+Math.trunc((Scene.height/2-Background.height/2));
                 
             }
             graphic.drawImage(sprites[i].image, sprites[i].frames[sprites[i].frame*2]*sprites[i].width,0,sprites[i].width, sprites[i].height, Temp_X, Temp_Y,sprites[i].width, sprites[i].height);
