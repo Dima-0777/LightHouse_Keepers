@@ -6,12 +6,23 @@ const buttonRight = document.querySelector(".right");
 
 Scene.width = window.innerWidth*0.98;
 Scene.height = window.innerHeight*1.01;
-graphic.scale((Math.trunc((Scene.width/1200)*100)/100),(Math.trunc((Scene.height/594)*100)/100));
-
-buttonRight.value = Scene.width+"|"+Scene.height+"|"+(Math.round(Scene.width/1200))+"|"+( Math.round(Scene.height/594));
 
 const Background = new Image();
 Background.src = "Textures/Map/background.png";
+
+X_Skift = 0;
+Y_Skift = 0;
+
+Background.onload = () =>
+{
+    graphic.scale((Math.trunc((Scene.width/Background.width)*1000)/1000),(Math.trunc((Scene.height/Background.height)*1000)/1000));
+    buttonRight.value = (Math.trunc((Scene.height/Background.height)*100)/100)
+    X_Skift = Math.trunc((Scene.width/2-((Background.width*(Math.trunc((Scene.width/Background.width)*1000)/1000))/2)));
+    Y_Skift = Math.trunc((Scene.height/2-((Background.height*(Math.trunc((Scene.height/Background.height)*1000)/1000))/2)));/*
+    X_Skift = Math.trunc((Scene.width/2-((Background.width)/2)));
+    Y_Skift = Math.trunc((Scene.height/2-((Background.height)/2)));*/
+}
+
 
 const Coliders = document.createElement("canvas");
 const Coliders_graphic = Coliders.getContext("2d");
@@ -1096,7 +1107,7 @@ function Calcs(player,controler,left,up,right,act,enter,down) {
 
 function draw() {
     graphic.clearRect(0, 0, Scene.width, Scene.height);
-    graphic.drawImage(Background, Math.trunc(Scene.width/2-Background.width/2), Math.trunc(Scene.height/2-Background.height/2));
+    graphic.drawImage(Background, X_Skift, Y_Skift);
     for (let i = 0; i<sprites.length;i++)
     {
         if (sprites[i].active){
@@ -1104,11 +1115,11 @@ function draw() {
             Temp_Y = sprites[i].y;
             if (sprites[i].relative)
             {
-                Temp_X = Math.trunc(sprites[i].x)+Math.trunc((Scene.width/2-Background.width/2));
-                Temp_Y = Math.trunc(sprites[i].y)+Math.trunc((Scene.height/2-Background.height/2));
-                
+                Temp_X = sprites[i].x+X_Skift;
+                Temp_Y = sprites[i].y+Y_Skift;
             }
-            graphic.drawImage(sprites[i].image, sprites[i].frames[sprites[i].frame*2]*sprites[i].width,0,sprites[i].width, sprites[i].height, Temp_X, Temp_Y,sprites[i].width, sprites[i].height);
+            buttonRight.value = sprites[i].frames[sprites[i].frame*2]*sprites[i].width;
+            graphic.drawImage(sprites[i].image,sprites[i].frames[sprites[i].frame*2]*sprites[i].width,0,sprites[i].width, sprites[i].height, Temp_X, Temp_Y,sprites[i].width, sprites[i].height);
         }
     }
 }
@@ -1315,7 +1326,7 @@ function Events_Update(){
     {
         if (events[i].active==true)
         {
-            if ((events[i].hp>0)&&(((player1.x>=((Scene.width/2-Background.width/2)+events[i].Action_area[0]))&&(player1.x<=((Scene.width/2-Background.width/2)+events[i].Action_area[2]))&&(player1.y>=((Scene.height/2-Background.height/2)+events[i].Action_area[1]))&&(player1.y<((Scene.height/2-Background.height/2)+events[i].Action_area[3])))||((player2.x>=((Scene.width/2-Background.width/2)+events[i].Action_area[0]))&&(player2.x<=((Scene.width/2-Background.width/2)+events[i].Action_area[2]))&&(player2.y>=((Scene.height/2-Background.height/2)+events[i].Action_area[1]))&&(player2.y<((Scene.height/2-Background.height/2)+events[i].Action_area[3])))))
+            if ((events[i].hp>0)&&(((player1.x>=(X_Skift+events[i].Action_area[0]))&&(player1.x<=(X_Skift+events[i].Action_area[2]))&&(player1.y>=(Y_Skift+events[i].Action_area[1]))&&(player1.y<(Y_Skift+events[i].Action_area[3])))||((player2.x>=(X_Skift+events[i].Action_area[0]))&&(player2.x<=(X_Skift+events[i].Action_area[2]))&&(player2.y>=(Y_Skift+events[i].Action_area[1]))&&(player2.y<(Y_Skift+events[i].Action_area[3])))))
             {
                 HighLight_Event(events[i]);
             }
@@ -1403,7 +1414,7 @@ function Action_Button_Pressed(player)
     {
         if (events[i].active==true)
         {
-            if ((player.x>=((Scene.width/2-Background.width/2)+events[i].Action_area[0]))&&(player.x<=((Scene.width/2-Background.width/2)+events[i].Action_area[2]))&&(player.y>=((Scene.height/2-Background.height/2)+events[i].Action_area[1]))&&(player.y<((Scene.height/2-Background.height/2)+events[i].Action_area[3])))               
+            if ((player.x>=(X_Skift+events[i].Action_area[0]))&&(player.x<=(X_Skift+events[i].Action_area[2]))&&(player.y>=(Y_Skift+events[i].Action_area[1]))&&(player.y<(Y_Skift+events[i].Action_area[3])))               
             {                                
                 Menu_pos = [player.menu_pos[0],player.menu_pos[1]];
                 if (events[i].name=="Sea Wall")
