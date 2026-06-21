@@ -6,7 +6,7 @@ const buttonRight = document.querySelector(".right");
 
 Scene.width = window.innerWidth*0.98;
 Scene.height = window.innerHeight*1.01;
-graphic.scale(Math.round(Scene.width/1200), Math.round(Scene.height/594));
+graphic.scale((Math.trunc((Scene.width/1200)*100)/100),(Math.trunc((Scene.height/594)*100)/100));
 
 buttonRight.value = Scene.width+"|"+Scene.height+"|"+(Math.round(Scene.width/1200))+"|"+( Math.round(Scene.height/594));
 
