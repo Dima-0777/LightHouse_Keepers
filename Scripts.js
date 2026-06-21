@@ -1106,8 +1106,8 @@ function draw() {
             Temp_Y = sprites[i].y;
             if (sprites[i].relative)
             {
-                Temp_X = sprites[i].x+Math.trunc((Scene.width/2-Background.width/2));
-                Temp_Y = sprites[i].y+Math.trunc((Scene.height/2-Background.height/2));
+                Temp_X = Math.trunc(sprites[i].x)+Math.trunc((Scene.width/2-Background.width/2));
+                Temp_Y = Math.trunc(sprites[i].y)+Math.trunc((Scene.height/2-Background.height/2));
                 
             }
             graphic.drawImage(sprites[i].image, sprites[i].frames[sprites[i].frame*2]*sprites[i].width,0,sprites[i].width, sprites[i].height, Temp_X, Temp_Y,sprites[i].width, sprites[i].height);
@@ -1407,7 +1407,7 @@ function Action_Button_Pressed(player)
     {
         if (events[i].active==true)
         {
-            if (((player.x>=events[i].Action_area[0])&&(player.x<=events[i].Action_area[2])&&(player.y>=events[i].Action_area[1])&&(player.y<events[i].Action_area[3])))
+            if ((player.x>=((Scene.width/2-Background.width/2)+events[i].Action_area[0]))&&(player.x<=((Scene.width/2-Background.width/2)+events[i].Action_area[2]))&&(player.y>=((Scene.height/2-Background.height/2)+events[i].Action_area[1]))&&(player.y<((Scene.height/2-Background.height/2)+events[i].Action_area[3])))               
             {                                
                 if (events[i].name=="Sea Wall")
                 {
