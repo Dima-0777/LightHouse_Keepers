@@ -1639,7 +1639,7 @@ function Action_Button_Pressed(player)
         }
     }
 
-    if ((Cocktail_Readyness[0]>=Cocktail_Readyness[1])&&((player.x>=584)&&(player.x<=637)&&(player.y>=279)&&(player.y<324)))
+    if ((Cocktail_Readyness[0]>=Cocktail_Readyness[1])&&((player.x+Math.trunc((Scene.width/2-Background.width/2))>=584)&&(player.x+Math.trunc((Scene.width/2-Background.width/2))<=637)&&(player.y+Math.trunc((Scene.height/2-Background.height/2))>=279)&&(player.y+Math.trunc((Scene.height/2-Background.height/2))<324)))
     {
         player.effects.push(["Speed2",1800,false]);
         Sget("Coctail Ready").active = false;
