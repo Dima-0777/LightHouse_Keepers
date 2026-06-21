@@ -21,6 +21,7 @@ main{
 
 canvas {
       y:1;
-      background: black;
+      background: Green;
+      scale: 150%;
     }
 
