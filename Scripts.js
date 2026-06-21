@@ -392,6 +392,7 @@ function Calcs(player,controler,left,up,right,act,enter,down) {
     
     if (player.control_Delay<0)
     {
+        Menu_pos = [player.menu_pos[0],player.menu_pos[1]];
         if ((Satelite_Manu_Used_By!=null)&&(Satelite_Manu_Used_By.idl==player.idl)){
             for (let i = 0;i<5;i++)
             {
@@ -455,7 +456,6 @@ function Calcs(player,controler,left,up,right,act,enter,down) {
             FishSpeed = 2;
             FishX=0;
             FishY=0;
-            Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
             if (player.idl=="player_2_Idl")
             {
                 Menu_pos[0]+=350-Sget("FM Base").width;
@@ -640,7 +640,6 @@ function Calcs(player,controler,left,up,right,act,enter,down) {
             CompSpeed = 3;
             CompX=0;
             CompY=0;
-            Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
             if (((keys[up])||((gp)&&(gp.axes[1]<-0.8)&&(gp.axes[0]>-0.25)&&(gp.axes[0]<0.25)))&&(!((keys[left])||(keys[right])||(keys[down]))))
             {
                 CompY-=CompSpeed;
@@ -790,7 +789,6 @@ function Calcs(player,controler,left,up,right,act,enter,down) {
         }
         else if ((Electro_Menu_Used_By!=null)&&(Electro_Menu_Used_By.idl==player.idl))
         {
-            Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
             if (player.idl=="player_2_Idl")
             {
                 Menu_pos[0]+=350-Sget("EM Base").width;
@@ -1639,7 +1637,7 @@ function Action_Button_Pressed(player)
         }
     }
 
-    if ((Cocktail_Readyness[0]>=Cocktail_Readyness[1])&&((player.x+Math.trunc((Scene.width/2-Background.width/2))>=584)&&(player.x+Math.trunc((Scene.width/2-Background.width/2))<=637)&&(player.y+Math.trunc((Scene.height/2-Background.height/2))>=279)&&(player.y+Math.trunc((Scene.height/2-Background.height/2))<324)))
+    if ((Cocktail_Readyness[0]>=Cocktail_Readyness[1])&&((player.x>=584)&&(player.x<=637)&&(player.y>=279)&&(player.y<324)))
     {
         player.effects.push(["Speed2",1800,false]);
         Sget("Coctail Ready").active = false;
