@@ -1409,7 +1409,7 @@ function Action_Button_Pressed(player)
         {
             if ((player.x>=((Scene.width/2-Background.width/2)+events[i].Action_area[0]))&&(player.x<=((Scene.width/2-Background.width/2)+events[i].Action_area[2]))&&(player.y>=((Scene.height/2-Background.height/2)+events[i].Action_area[1]))&&(player.y<((Scene.height/2-Background.height/2)+events[i].Action_area[3])))               
             {                                
-                Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
+                Menu_pos = [player.menu_pos[0],player.menu_pos[1]];
                 if (events[i].name=="Sea Wall")
                 {
                     Sget(player.idl).active = false;
