@@ -1409,6 +1409,7 @@ function Action_Button_Pressed(player)
         {
             if ((player.x>=((Scene.width/2-Background.width/2)+events[i].Action_area[0]))&&(player.x<=((Scene.width/2-Background.width/2)+events[i].Action_area[2]))&&(player.y>=((Scene.height/2-Background.height/2)+events[i].Action_area[1]))&&(player.y<((Scene.height/2-Background.height/2)+events[i].Action_area[3])))               
             {                                
+                Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
                 if (events[i].name=="Sea Wall")
                 {
                     Sget(player.idl).active = false;
@@ -1425,7 +1426,6 @@ function Action_Button_Pressed(player)
                     Sget("SM Base").active = true;
                     Sget("SM No Signal").active = true;
 
-                    Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
                     if (player.idl=="player_2_Idl")
                     {
                         Menu_pos[0]+=350-Sget("SM Base").width;
@@ -1464,7 +1464,6 @@ function Action_Button_Pressed(player)
                 else if ((events[i].name=="Fish")&&(Fish_Menu_Used_By==null))
                 {
                     Temp_array = ["FM Food 0","FM Food 1","FM Food 2","FM Food 3","FM Food 4","FM Food 5","FM Enemy 0","FM Enemy 1","FM Enemy 2","FM Enemy 3","FM Enemy 4","FM Enemy 5","FM Fish 0","FM Fish 1","FM Fish 2","FM Fish 3","FM Fish 4","FM Fish 5","FM Fish 6","FM Fish 7","FM HP 6","FM HP 5","FM HP 4","FM HP 3","FM HP 2","FM HP 1","FM HP 0","FM Base",];
-                    Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
                     if (player.idl=="player_2_Idl")
                     {
                         Menu_pos[0]+=350-Sget("FM Base").width;
@@ -1511,7 +1510,6 @@ function Action_Button_Pressed(player)
                 else if ((events[i].name=="Comp")&&(Comp_Menu_Used_By==null))
                 {
                     Temp_array = ["CM Base","CM Cursor","CM Virus 0","CM Virus 1","CM Virus 2","CM Virus 3","CM Virus 4","CM Virus 5","CM App 0","CM App 1","CM App 2","CM App 3","CM App 4","CM App 5"];
-                    Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
                     Sget(Temp_array[0]).active=true;
                     Sset(Sget(Temp_array[0]),Menu_pos[0],Menu_pos[1]);
                     Sget(Temp_array[1]).active=true;
@@ -1561,7 +1559,6 @@ function Action_Button_Pressed(player)
                     {
                         Sget(Temp_array[i]).active = true;
                     }
-                    Menu_pos = [player.menu_pos[0]+(Scene.width/2-Background.width/2),player.menu_pos[1]+(Scene.height/2-Background.height/2)];
                     if (player.idl=="player_2_Idl")
                     {
                         Menu_pos[0]+=350-Sget("EM Base").width;
