@@ -5,7 +5,10 @@ const buttonLeft = document.querySelector(".left");
 const buttonRight = document.querySelector(".right");
 
 Scene.width = window.innerWidth*0.98;
-Scene.height = window.innerHeight*1;
+Scene.height = window.innerHeight*1.01;
+graphic.scale(Math.round(Scene.width/1200), Math.round(Scene.height/594));
+
+buttonRight.value = Scene.width+"|"+Scene.height+"|"+(Math.round(Scene.width/1200))+"|"+( Math.round(Scene.height/594));
 
 const Background = new Image();
 Background.src = "Textures/Map/background.png";
@@ -213,7 +216,6 @@ function Calcs(player,controler,left,up,right,act,enter,down) {
     
     for (let i =0;i<player.effects.length;i++)
     {
-        buttonRight.value=player.effects[0][1];
         if ((player.effects[i][0]=="Speed2")&&(player.effects[i][2]==false))
         {
             player.speed[0]=5;
@@ -1000,11 +1002,9 @@ function Calcs(player,controler,left,up,right,act,enter,down) {
             else if ((!Electro_Menu_Buffer)&&((keys[right])||((gp)&&(gp.axes[0]>0.8)&&(gp.axes[1]>-0.25)))&&(!((keys[left])||(keys[up])||(keys[down]))))
             {
                 Cabel_Menu_In_Wire = true;
-                buttonRight.value="";
                 Cabel_Menu_selected_2=0;
                 for (let i = 0; i <3;i++)
                 {
-                    buttonRight.value+=("["+i+"|"+(Cabel_Menu_progress[i*2]!=Cabel_Menu_progress[(i*2)+1])+"|"+(Cabel_Menu_progress[i*2]>Cabel_Menu_selected_2)+"]");
                     if ((Cabel_Menu_progress[i*2]!=Cabel_Menu_progress[(i*2)+1])&&(Cabel_Menu_progress[i*2]>Cabel_Menu_selected_2))
                     {
                         Cabel_Menu_selected_2 = Cabel_Menu_progress[i*2];
@@ -1150,8 +1150,6 @@ async function startGame() {
         player2.width = sprites.find(s => s.name === "player_2_Idl").width;
         player2.height = sprites.find(s => s.name === "player_2_Idl").height;
         Prioritise_Sprites();
-        buttonRight.value = Sprites_Ready;
-        buttonRight.value += sprites.indexOf(Sget("SM Base"));
     Set_Events();
     loop(); 
     }         
