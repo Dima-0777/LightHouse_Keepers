@@ -15,12 +15,10 @@ Y_Skift = 0;
 
 Background.onload = () =>
 {
-    graphic.scale((Math.trunc((Scene.width/Background.width)*1000)/1000),(Math.trunc((Scene.height/Background.height)*1000)/1000));
+    //graphic.scale((Math.trunc((Scene.width/Background.width)*1000)/1000),(Math.trunc((Scene.height/Background.height)*1000)/1000));
     buttonRight.value = (Math.trunc((Scene.height/Background.height)*100)/100)
-    X_Skift = Math.trunc((Scene.width/2-((Background.width*(Math.trunc((Scene.width/Background.width)*1000)/1000))/2)));
-    Y_Skift = Math.trunc((Scene.height/2-((Background.height*(Math.trunc((Scene.height/Background.height)*1000)/1000))/2)));/*
     X_Skift = Math.trunc((Scene.width/2-((Background.width)/2)));
-    Y_Skift = Math.trunc((Scene.height/2-((Background.height)/2)));*/
+    Y_Skift = Math.trunc((Scene.height/2-((Background.height)/2)));
 }
 
 
