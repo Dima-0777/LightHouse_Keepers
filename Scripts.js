@@ -18,7 +18,6 @@ Background.onload = () =>
 {
     //*
     graphic.scale((Math.trunc((Scene.width/Background.width)*100)/100),(Math.trunc((Scene.height/Background.height)*100)/100));
-    buttonRight.value = (Math.trunc((Scene.height/Background.height)*100)/100)
     X_Skift = Math.trunc((Scene.width/2-((Background.width*(Math.trunc((Scene.width/Background.width)*100)/100))/2)));
     Y_Skift = Math.trunc((Scene.height/2-((Background.height*(Math.trunc((Scene.height/Background.height)*100)/100))/2)));//*/
 
@@ -40,6 +39,8 @@ colImg.src = "Textures/Map/Coliders.png";
 Coliders_array=[];
 
 colImg.onload = () => {
+    Coliders.width = colImg.width;
+    Coliders.height = colImg.height;
     Coliders_graphic.drawImage(colImg, X_Skift, Y_Skift);
     //Coliders_graphic.scale((Math.trunc((Coliders.width/colImg.width)*100)/100),(Math.trunc((Coliders.height/colImg.height)*100)/100));
     Temp_Array1 = Coliders_graphic.getImageData(0,0,Coliders.width,Coliders.height).data;
@@ -53,6 +54,7 @@ colImg.onload = () => {
         }
         Coliders_array.push(Temp_Array2);
     }
+    buttonRight.value = Coliders_array[0].length;
 };
 
 const sprites = [];
@@ -1123,7 +1125,6 @@ function draw() {
                 Temp_X = sprites[i].x+X_Skift;
                 Temp_Y = sprites[i].y+Y_Skift;
             }
-            buttonRight.value = sprites[i].frames[sprites[i].frame*2]*sprites[i].width;
             graphic.drawImage(sprites[i].image,sprites[i].frames[sprites[i].frame*2]*sprites[i].width,0,sprites[i].width, sprites[i].height, Temp_X, Temp_Y,sprites[i].width, sprites[i].height);
         }
     }
