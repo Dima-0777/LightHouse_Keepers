@@ -6,7 +6,7 @@ const buttonRight = document.querySelector(".right");
 
 Scene.width = window.innerWidth*0.98;
 Scene.height = window.innerHeight*1.02;
-graphic.imageSmoothingEnabled = false;
+//graphic.imageSmoothingEnabled = false;
 
 const Background = new Image();
 Background.src = "Textures/Map/background.png";
