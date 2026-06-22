@@ -5,7 +5,8 @@ const buttonLeft = document.querySelector(".left");
 const buttonRight = document.querySelector(".right");
 
 Scene.width = window.innerWidth*0.98;
-Scene.height = window.innerHeight*1.01;
+Scene.height = window.innerHeight*1.02;
+graphic.imageSmoothingEnabled = false;
 
 const Background = new Image();
 Background.src = "Textures/Map/background.png";
@@ -15,10 +16,15 @@ Y_Skift = 0;
 
 Background.onload = () =>
 {
-    //graphic.scale((Math.trunc((Scene.width/Background.width)*1000)/1000),(Math.trunc((Scene.height/Background.height)*1000)/1000));
+    //*
+    graphic.scale((Math.trunc((Scene.width/Background.width)*100)/100),(Math.trunc((Scene.height/Background.height)*100)/100));
     buttonRight.value = (Math.trunc((Scene.height/Background.height)*100)/100)
+    X_Skift = Math.trunc((Scene.width/2-((Background.width*(Math.trunc((Scene.width/Background.width)*100)/100))/2)));
+    Y_Skift = Math.trunc((Scene.height/2-((Background.height*(Math.trunc((Scene.height/Background.height)*100)/100))/2)));//*/
+
+    /*
     X_Skift = Math.trunc((Scene.width/2-((Background.width)/2)));
-    Y_Skift = Math.trunc((Scene.height/2-((Background.height)/2)));
+    Y_Skift = Math.trunc((Scene.height/2-((Background.height)/2)));//*/
 }
 
 
@@ -34,7 +40,8 @@ colImg.src = "Textures/Map/Coliders.png";
 Coliders_array=[];
 
 colImg.onload = () => {
-    Coliders_graphic.drawImage(colImg, Coliders.width/2-colImg.width/2, Coliders.height/2-colImg.height/2);
+    Coliders_graphic.drawImage(colImg, X_Skift, Y_Skift);
+    //Coliders_graphic.scale((Math.trunc((Coliders.width/colImg.width)*100)/100),(Math.trunc((Coliders.height/colImg.height)*100)/100));
     Temp_Array1 = Coliders_graphic.getImageData(0,0,Coliders.width,Coliders.height).data;
 
     for (let y=0;y<Coliders.height;y++)
